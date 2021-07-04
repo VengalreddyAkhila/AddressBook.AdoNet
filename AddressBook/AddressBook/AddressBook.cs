@@ -97,6 +97,43 @@ namespace AddressBook
                 connection.Close();
             }
         }
+        public bool UpdateRecord(AddressDetails address)
+        {
+            SqlConnection connection = new SqlConnection(connectionstring);
+            try
+            {
+                AddressDetails addressDetails = new AddressDetails();
+                using (connection)
+                {
+                    SqlCommand command = new SqlCommand("spUpdateContacts", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@FirstName", address.FirstName);
+                    command.Parameters.AddWithValue("@LastName", address.LastName);
+                    command.Parameters.AddWithValue("@Address", address.Address);
+                    command.Parameters.AddWithValue("@City", address.City);
+                    command.Parameters.AddWithValue("@State", address.State);
+                    command.Parameters.AddWithValue("@ZipCode", address.ZipCode);
+                    command.Parameters.AddWithValue("@PhoneNumber", address.PhoneNumber);
+                    command.Parameters.AddWithValue("@Email", address.Email);
+                    connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    connection.Close();
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
 
     }
             

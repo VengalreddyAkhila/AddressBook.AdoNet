@@ -18,8 +18,9 @@ namespace AddressBook
             address.Address = "h";
             address.Email = "gh";
 
-            //address.GetData();
+            address.GetData();
             addressBook.AddNewRecord(address);
+            addressBook.UpdateRecord(address);
             
            
         }
