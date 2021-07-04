@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -27,17 +28,17 @@ namespace AddressBook
                     {
                         while (dr.Read())
                         {
-                            address.FirstName = dr[0] != null ? dr.GetString(1) : "Akhila";
+                            address.FirstName = dr[0] != null ? dr.GetString(0) : "Akhila";
                             address.LastName = dr[1] != null ? dr.GetString(1) : "Akhila";
-                            address.Address = dr[2] != null ? dr.GetString(1) : "Akhila";
-                            address.City = dr[3] != null ? dr.GetString(1) : "Akhila";
-                            address.State = dr[4] != null ? dr.GetString(1) : "Akhila";
-                            address.ZipCode = dr[5] != null ? dr.GetString(1) : "Akhila";
-                            address.PhoneNumber = dr[6] != null ? dr.GetString(1) : "Akhila";
-                            address.Email = dr[7] != null ? dr.GetString(1) : "Akhila";
+                            address.Address = dr[2] != null ? dr.GetString(2) : "Akhila";
+                            address.City = dr[3] != null ? dr.GetString(3) : "Akhila";
+                            address.State = dr[4] != null ? dr.GetString(4) : "Akhila";
+                            address.ZipCode = dr[5] != null ? dr.GetString(5) : "Akhila";
+                            address.PhoneNumber = dr[6] != null ? dr.GetString(6) : "Akhila";
+                            address.Email = dr[7] != null ? dr.GetString(5) : "xyz";
                             //address.type = dr.GetString(8);
                             //address.name = dr.GetString(9);
-                            Console.WriteLine("{0},{1},{2},{3}",address.FirstName,address.LastName,address.Address,address.City);
+                            Console.WriteLine("{0},{1},{2},{3}", address.FirstName, address.LastName, address.Address, address.City);
                             Console.WriteLine("\n");
                         }
                     }
@@ -58,6 +59,45 @@ namespace AddressBook
             {
                 connection.Close();
             }
-        }    
+        }
+        public bool AddNewRecord(AddressDetails address)
+        {
+            SqlConnection connection = new SqlConnection(connectionstring);
+            try
+            {
+                AddressDetails addressDetails = new AddressDetails();
+                using (connection)
+                {
+                    SqlCommand command = new SqlCommand("spAddContacts", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@FirstName", address.FirstName);
+                    command.Parameters.AddWithValue("@LastName", address.LastName);
+                    command.Parameters.AddWithValue("@Address", address.Address);
+                    command.Parameters.AddWithValue("@City", address.City);
+                    command.Parameters.AddWithValue("@State", address.State);
+                    command.Parameters.AddWithValue("@ZipCode", address.ZipCode);
+                    command.Parameters.AddWithValue("@PhoneNumber", address.PhoneNumber);
+                    command.Parameters.AddWithValue("@Email", address.Email);
+                    connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    connection.Close();
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
     }
+            
 }
